@@ -46,13 +46,11 @@ def CategoricalHinge(y_true, y_pred):
 def CosineSimilarity(y_true, y_pred):
     _check_data_validity(y_true, y_pred)
 
-    # Calculate the L2 Norm of the true and predicted labels
-    y_true = y_true/np.linalg.norm(y_true)
-    y_pred = y_pred/np.linalg.norm(y_pred)
-
     # Calculate loss
-    loss = -np.sum(np.mean(np.expand_dims(y_true*y_pred, axis=1), axis=1))
-    return loss
+    return -np.sum(
+        np.mean(np.expand_dims(
+            y_true/np.linalg.norm(y_true)*y_pred/np.linalg.norm(y_pred), 
+            axis=1), axis=1))
 
 def Hinge(y_true, y_pred):
     _check_data_validity(y_true, y_pred)
@@ -80,29 +78,25 @@ def MAE(y_true, y_pred):
     _check_data_validity(y_true, y_pred)
 
     # Calculate Loss
-    loss = np.mean(abs(y_true - y_pred), axis=-1)
-    return loss
+    return np.mean(abs(y_true - y_pred), axis=-1)
 
 def MAPE(y_true, y_pred):
     _check_data_validity(y_true, y_pred)
 
     # Calculate Loss
-    loss = 100 * np.mean(abs(y_true - y_pred), axis=-1)
-    return loss
+    return 100 * np.mean(abs(y_true - y_pred), axis=-1)
 
 def MSE(y_true, y_pred):
     _check_data_validity(y_true, y_pred)
 
     # Calculate Loss
-    loss = np.mean(np.square(y_true - y_pred), axis=-1)
-    return loss
+    return np.mean(np.square(y_true - y_pred), axis=-1)
 
 def MSLE(y_true, y_pred):
     _check_data_validity(y_true, y_pred)
 
     # Calculate Loss
-    loss = np.mean(np.square(np.log(y_true + 1) - np.log(y_pred + 1)), axis=-1)
-    return loss
+    return np.mean(np.square(np.log(y_true + 1) - np.log(y_pred + 1)), axis=-1)
 
 def Poisson(y_true, y_pred):
     _check_data_validity(y_true, y_pred)
