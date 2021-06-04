@@ -1,8 +1,9 @@
 import numpy as np
+import pickle
 
 class elu:
 
-    def forward(self, x, alpha):
+    def forward(self, x, alpha=1.0):
         output_matrix = []
         for i in np.nditer(x):
             if i > 0:
@@ -18,7 +19,7 @@ class exponential:
 
 class hard_sigmoid:
 
-    def forward(self):
+    def forward(self, x):
         output = []
         for i in np.nditer(x):
             if i < -2.5:
@@ -34,6 +35,9 @@ class relu:
 
     def forward(self, x):
         return np.maximum(0, x).astype(np.float32)
+
+    def backward(self, dx):
+        pass
 
 class selu:
 
@@ -74,3 +78,18 @@ class leaky_relu:
 
     def forward(self, x, alpha=0.3):
         return np.maximum(alpha*x, x).astype(np.float32)
+
+
+def deserialize(name, **kwargs):
+    if name == 'elu': return pickle.dumps(elu)
+    elif name == 'exponential': return pickle.dumps(exponential)
+    elif name == 'hard_sigmoid': return pickle.dumps(hard_sigmoid)
+    elif name == 'relu': return pickle.dumps(relu)
+    elif name == 'selu': return pickle.dumps(selu)
+    elif name == 'sigmoid': return pickle.dumps(sigmoid)
+    elif name == 'softmax': return pickle.dumps(softmax)
+    elif name == 'softplus': return pickle.dumps(softplus)
+    elif name == 'swish': return pickle.dumps(swish)
+    elif name == 'tanh': return pickle.dumps(tanh)
+    elif name == 'leaky_rellu': return pickle.dumps(leaky_relu)
+    else: raise ValueError(f'Unknown activation function: {name}')

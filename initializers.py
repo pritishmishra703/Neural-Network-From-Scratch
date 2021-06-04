@@ -1,3 +1,4 @@
+import pickle
 import numpy as np
 
 def Constant(shape, value=0):
@@ -112,3 +113,19 @@ def LecunUniform(shape, seed=None):
 def Orthogonal(shape, gain=1.0, seed=None):
     ####### REMAINING
     pass
+
+def deserialize(name, **kwargs):
+    if name == 'constant': return pickle.dumps(Constant)
+    elif name == 'identity': return pickle.dumps(Identity)
+    elif name == 'ones': return pickle.dumps(Ones)
+    elif name == 'random_normal': return pickle.dumps(RandomNormal)
+    elif name == 'random_uniform': return pickle.dumps(RandomUniform)
+    elif name == 'zeros': return pickle.dumps(Zeros)
+    elif name == 'glorot_normal': return pickle.dumps(GlorotNormal)
+    elif name == 'glorot_uniform': return pickle.dumps(GlorotUniform)
+    elif name == 'lecun_normal': return pickle.dumps(LecunNormal)
+    elif name == 'lecun_uniform': return pickle.dumps(LecunUniform)
+    elif name == 'he_normal': return pickle.dumps(HeNormal)
+    elif name == 'he_uniform': return pickle.dumps(HeUniform)
+    elif name == 'orthogonal': return pickle.dumps(Orthogonal)
+    else: raise ValueError(f'Unknown initializer: {name}')
