@@ -34,10 +34,12 @@ class hard_sigmoid:
 class relu:
 
     def forward(self, x):
+        self.x = x
         return np.maximum(0, x).astype(np.float32)
 
     def backward(self, dx):
-        pass
+        self.dinputs = dx.copy()
+        self.dinputs[self.x <= 0] = 0
 
 class selu:
 
