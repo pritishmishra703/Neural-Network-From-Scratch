@@ -24,7 +24,7 @@ def _check_data_validity(y_true, y_pred):
 
 class BinaryCrossEntropy:
 
-    def forward(y_true, y_pred):
+    def forward(self, y_true, y_pred):
         _check_data_validity(y_true, y_pred)
 
         y_pred = np.clip(y_pred, 1e-7, 1 - 1e-7)
@@ -36,13 +36,13 @@ class BinaryCrossEntropy:
 
 class CategoricalCrossEntropy:
 
-    def forward(y_true, y_pred):
+    def forward(self, y_true, y_pred):
         _check_data_validity(y_true, y_pred)
     
 
 class CategoricalHinge:
 
-    def forward(y_true, y_pred):
+    def forward(self, y_true, y_pred):
         _check_data_validity(y_true, y_pred)
         pos = np.sum(y_true * y_pred, axis=-1)
         neg = np.max((1. - y_true) * y_pred, axis=-1)
@@ -51,7 +51,7 @@ class CategoricalHinge:
 
 class CosineSimilarity:
 
-    def forward(y_true, y_pred):
+    def forward(self, y_true, y_pred):
         _check_data_validity(y_true, y_pred)
         return -np.sum(
             np.mean(np.expand_dims(
@@ -60,13 +60,13 @@ class CosineSimilarity:
 
 class Hinge:
 
-    def forward(y_true, y_pred):
+    def forward(self, y_true, y_pred):
         _check_data_validity(y_true, y_pred)
         return np.mean(np.maximum(1.0 - y_true * y_pred, 0.0), axis=-1)
 
 class Huber:
 
-    def forward(y_true, y_pred, delta=1.0):
+    def forward(self, y_true, y_pred, delta=1.0):
         _check_data_validity(y_true, y_pred)
         error = np.subtract(y_true, y_pred)
         absolute_error = np.abs(error)
@@ -75,7 +75,7 @@ class Huber:
 
 class KLDivergence:
 
-    def forward(y_true, y_pred):
+    def forward(self, y_true, y_pred):
         _check_data_validity(y_true, y_pred)
         y_true = np.clip(y_true, 1e-7, 1.0 - 1e-7)
         y_pred = np.clip(y_pred, 1e-7, 1.0 - 1e-7)
@@ -83,47 +83,51 @@ class KLDivergence:
 
 class LogCosh:
 
-    def forward(y_true, y_pred):
+    def forward(self, y_true, y_pred):
         _check_data_validity(y_true, y_pred)
         error = np.subtract(y_true, y_pred)
         return np.mean(error + softplus(-2.0*error) - np.log(2.0))
 
 class MAE:
 
-    def forward(y_true, y_pred):
+    def forward(self, y_true, y_pred):
         _check_data_validity(y_true, y_pred)
         return np.mean(abs(y_true - y_pred), axis=-1)
 
 class MAPE:
 
-    def forward(y_true, y_pred):
+    def forward(self, y_true, y_pred):
         _check_data_validity(y_true, y_pred)
         return 100 * np.mean(abs(y_true - y_pred), axis=-1)
 
 class MSE:
 
-    def forward(y_true, y_pred):
-        _check_data_validity(y_true, y_pred)
+    def forward(self, y_true, y_pred):
+        # _check_data_validity(y_true, y_pred)
         return np.mean(np.square(y_true - y_pred), axis=-1)
+
+    def backward(self, y_true, dvalues):
+        self.dinputs = -2 * (y_true - dvalues) / len(dvalues)
+
 
 class MSLE:
 
-    def forward(y_true, y_pred):
+    def forward(self, y_true, y_pred):
         _check_data_validity(y_true, y_pred)
         return np.mean(np.square(np.log(y_true + 1) - np.log(y_pred + 1)), axis=-1)
 
 class Poisson:
 
-    def forward(y_true, y_pred):
+    def forward(self, y_true, y_pred):
         _check_data_validity(y_true, y_pred)
         return np.mean(y_pred - y_true * np.log(y_pred + 1e-7), axis=-1)
 
 class SparseCategoricalCrossentropy:
 
-    def forward(y_true, y_pred):
+    def forward(self, y_true, y_pred):
         _check_data_validity(y_true, y_pred)
 
 class SquaredHinge:
 
-    def forward(y_true, y_pred):
+    def forward(self, y_true, y_pred):
         _check_data_validity(y_true, y_pred)

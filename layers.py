@@ -19,7 +19,7 @@ class Dense:
         self.bias_constraint = bias_constraint
 
         if self.units < 1:
-            raise ValueError("'units' should be strictly greater that or equal to 1")
+            raise ValueError("'units' should be strictly greater than or equal to 1")
 
         self.activation_func = pickle.loads(activation_functions.deserialize(self.activation))()
         self.weight_initializer_func = pickle.loads(initializers.deserialize(self.weight_initializer))
@@ -30,9 +30,9 @@ class Dense:
         self.inputs = inputs
         self.weights = self.weight_initializer_func(shape=(inputs.shape[-1], self.units))
         self.biases = self.bias_initializer_func(shape=(self.units,))
-        self.output = self.activation_func.forward(np.dot(self.inputs, self.weights) + self.biases)
+        self.output = np.dot(self.inputs, self.weights) + self.biases
 
     def backward(self, inputs):
         self.dweights = np.dot(self.inputs.T, inputs)
-        self.dbiases = np.sum(inputs, axis=0, keepdims=True)
-        self.dinputs = np.dot(inputs, self.weights.T)
+        self.dbiases = np.sum(inputs, axis=0)
+        self.dinputs = np.dot(inputs, self.weights)
