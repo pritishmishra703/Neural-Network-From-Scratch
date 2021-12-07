@@ -82,6 +82,15 @@ class leaky_relu:
         return np.maximum(alpha*x, x).astype(np.float32)
 
 
+class linear:
+
+    def forward(self, x):
+        return x
+
+    def backward(self, dx):
+        return dx
+
+
 def deserialize(name, **kwargs):
     if name == 'elu': return pickle.dumps(elu)
     elif name == 'exponential': return pickle.dumps(exponential)
@@ -94,4 +103,5 @@ def deserialize(name, **kwargs):
     elif name == 'swish': return pickle.dumps(swish)
     elif name == 'tanh': return pickle.dumps(tanh)
     elif name == 'leaky_rellu': return pickle.dumps(leaky_relu)
+    elif name == 'linear': return pickle.dumps(linear)
     else: raise ValueError(f'Unknown activation function: {name}')
