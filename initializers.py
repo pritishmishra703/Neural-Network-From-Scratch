@@ -1,6 +1,7 @@
 import pickle
 import numpy as np
 
+
 def Constant(shape, value=0):
     return np.full(shape=shape, fill_value=value, dtype=np.float32)
 

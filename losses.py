@@ -2,6 +2,7 @@ import numpy as np
 import warnings
 from dlthon.activation_functions import softplus
 
+
 def _check_data_validity(y_true, y_pred):
     # Check if Data type is a numpy array
     if not isinstance(y_true, np.ndarray) or not isinstance(y_pred, np.ndarray):
@@ -38,7 +39,7 @@ class CategoricalCrossEntropy:
 
     def forward(self, y_true, y_pred):
         _check_data_validity(y_true, y_pred)
-    
+
 
 class CategoricalHinge:
 
@@ -58,11 +59,13 @@ class CosineSimilarity:
                 y_true/np.linalg.norm(y_true)*y_pred/np.linalg.norm(y_pred), 
                 axis=1), axis=1))
 
+
 class Hinge:
 
     def forward(self, y_true, y_pred):
         _check_data_validity(y_true, y_pred)
         return np.mean(np.maximum(1.0 - y_true * y_pred, 0.0), axis=-1)
+
 
 class Huber:
 
@@ -73,6 +76,7 @@ class Huber:
         return np.mean(np.where(absolute_error <= delta, 
         0.5 * np.square(error), 0.5 + np.square(delta) + delta * (absolute_error - delta)), axis=-1)
 
+
 class KLDivergence:
 
     def forward(self, y_true, y_pred):
@@ -81,6 +85,7 @@ class KLDivergence:
         y_pred = np.clip(y_pred, 1e-7, 1.0 - 1e-7)
         return np.sum(y_true*np.log(y_true/y_pred), axis=-1)
 
+
 class LogCosh:
 
     def forward(self, y_true, y_pred):
@@ -88,17 +93,20 @@ class LogCosh:
         error = np.subtract(y_true, y_pred)
         return np.mean(error + softplus(-2.0*error) - np.log(2.0))
 
+
 class MAE:
 
     def forward(self, y_true, y_pred):
         _check_data_validity(y_true, y_pred)
         return np.mean(abs(y_true - y_pred), axis=-1)
 
+
 class MAPE:
 
     def forward(self, y_true, y_pred):
         _check_data_validity(y_true, y_pred)
         return 100 * np.mean(abs(y_true - y_pred), axis=-1)
+
 
 class MSE:
 
@@ -116,16 +124,19 @@ class MSLE:
         _check_data_validity(y_true, y_pred)
         return np.mean(np.square(np.log(y_true + 1) - np.log(y_pred + 1)), axis=-1)
 
+
 class Poisson:
 
     def forward(self, y_true, y_pred):
         _check_data_validity(y_true, y_pred)
         return np.mean(y_pred - y_true * np.log(y_pred + 1e-7), axis=-1)
 
+
 class SparseCategoricalCrossentropy:
 
     def forward(self, y_true, y_pred):
         _check_data_validity(y_true, y_pred)
+
 
 class SquaredHinge:
 

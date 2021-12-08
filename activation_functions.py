@@ -12,10 +12,12 @@ class elu:
                 output_matrix.append(alpha*(np.exp(i) - 1))
         return np.array(output_matrix).reshape(x.shape).astype(np.float32)
 
+
 class exponential:
 
     def forward(self, x):
         return np.exp(x).astype(np.float32)
+
 
 class hard_sigmoid:
 
@@ -31,15 +33,18 @@ class hard_sigmoid:
 
         return np.array(output).reshape(x.shape).astype(np.float32)
 
+
 class relu:
 
-    def forward(self, x):
-        self.x = x
-        return np.maximum(0, x).astype(np.float32)
+    def forward(self, inputs):
+        self.inputs = inputs
+        self.output = np.maximum(0, inputs).astype(np.float32)
+
 
     def backward(self, dx):
         self.dinputs = dx.copy()
-        self.dinputs[self.x <= 0] = 0
+        self.dinputs[self.inputs <= 0] = 0
+
 
 class selu:
 
@@ -48,10 +53,12 @@ class selu:
         scale=1.05070098
         return scale*elu(x, alpha).astype(np.float32)
 
+
 class sigmoid:
 
     def forward(self, x):
         return 1/(1 + np.exp(-x)).astype(np.float32)
+
 
 class softmax:
     
@@ -60,21 +67,25 @@ class softmax:
         output = exp_values/np.sum(exp_values, keepdims=True, axis=1)
         return output.astype(np.float32)
 
+
 class softplus:
 
     def forward(self, x):
         return np.log(np.exp(x) + 1).astype(np.float32)
+
 
 class swish:
     
     def forward(self, x):
         return x * sigmoid(x).astype(np.float32)
 
+
 class tanh:
 
     def forward(self, x):
         return (np.exp(x) - np.exp(-x)) \
             /(np.exp(x) + np.exp(-x)).astype(np.float32)
+
 
 class leaky_relu:
 
@@ -87,7 +98,7 @@ class linear:
     def forward(self, x):
         return x
 
-    def backward(self, dx):
+    def backward(self, dx, *args):
         return dx
 
 
