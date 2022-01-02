@@ -5,7 +5,7 @@ from dlthon.activation_functions import softplus
 
 def _check_data_validity(y_true, y_pred):
     # Check if Data type is a numpy array
-    if not isinstance(y_true, np.ndarray) or not isinstance(y_pred, np.ndarray):
+    if not isinstance(y_true, np.ndarray) and not isinstance(y_pred, np.ndarray):
         raise TypeError("Data should be of type 'numpy.ndarray'")
 
     # Check if length of both array is same
@@ -39,6 +39,21 @@ class CategoricalCrossEntropy:
 
     def forward(self, y_true, y_pred):
         _check_data_validity(y_true, y_pred)
+        m = len(y_pred)
+        y_pred = np.clip(y_pred, 1e-7, 1 - 1e-7)
+        if len(y_true.shape) == 1:
+            correct_confidences = y_pred[range(m), y_true]
+        elif len(y_true.shape) == 2:
+            correct_confidences = np.sum(y_pred*y_true, axis=1)
+        return -np.log(correct_confidences)
+    
+
+    def backward(self, y_true, dx):
+        m, n = len(dx), len(dx[0])
+        if len(y_true.shape) == 1:
+            y_true = np.eye(n)[y_true]
+        self.dinputs = - y_true/dx
+        self.dinputs = self.dinputs/m
 
 
 class CategoricalHinge:
@@ -114,8 +129,8 @@ class MSE:
         # _check_data_validity(y_true, y_pred)
         return np.mean(np.square(y_true - y_pred), axis=-1)
 
-    def backward(self, y_true, dvalues):
-        self.dinputs = -2 * (y_true - dvalues) / len(dvalues)
+    def backward(self, y_true, dx):
+        self.dinputs = -2 * (y_true - dx) / len(dx)
 
 
 class MSLE:

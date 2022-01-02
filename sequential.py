@@ -45,7 +45,7 @@ class Sequential:
                     activation = pickle.loads(activation_functions.deserialize(layer.activation))()
                     self.layers.insert(i+1, activation)
 
-        self.finalized = True
+        self.built = True
 
 
     def compile(self, optimizer, loss, metrics):
@@ -55,8 +55,9 @@ class Sequential:
 
 
     def fit(self, X, y, epochs=10):
-        if not hasattr(self, 'finalized'):
+        if not hasattr(self, 'built'):
             self.build(X.shape)
+
 
         for epoch in range(1, epochs + 1):
             # FORWARD PASS
@@ -67,19 +68,21 @@ class Sequential:
                 else:
                     layer.forward(last_forward)
                     last_forward = layer.output.copy()
-            
+
             # CALCULATING LOSS AND METRICS
-            predictions = last_forward.ravel()
+            predictions = last_forward
             loss = self.loss.forward(y, predictions)
+            loss = np.average(loss) # REMOVE THIS
             metrics = self.metrics.forward(y, predictions)
+            metrics = np.average(metrics) # REMOVE THIS
             if epoch % 100 == 0:
                 print(f'Epoch: {epoch}, Loss: {loss}, Metrics: {metrics}')
 
             # BACKWARD PASS
-            self.loss.backward(y, predictions)
+            self.loss.backward(y, predictions) # CHANGE (ravel)
             for i, layer in enumerate(self.layers[::-1]):
                 if i == 0:
-                    layer.backward(np.expand_dims(self.loss.dinputs, axis=1))
+                    layer.backward(self.loss.dinputs) # CHANGE (expand dims)
                     last_backward = layer.dinputs.copy()
                 else:
                     layer.backward(last_backward)
@@ -98,7 +101,8 @@ class Sequential:
                 layer.forward(X)
                 last_forward = layer.output.copy()
             else:
-                layer.forward(last_forward)
-                last_forward = layer.output.copy() 
+                if not hasattr(layer, 'oii'):
+                    layer.forward(last_forward)
+                    last_forward = layer.output.copy() 
         
-        return last_forward.ravel()
+        return last_forward

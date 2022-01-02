@@ -41,3 +41,23 @@ class Dense:
         self.weights = self.weight_initializer_func(shape=(self.input_shape[-1], self.units))
         self.biases = self.bias_initializer_func(shape=(self.units,))
         self.initialized = True
+
+
+class Dropout:
+
+    def __init__(self, rate):
+        if rate < 0 or rate > 1:
+            raise ValueError("'rate' should be in range (0, 1)")
+
+        self.rate = 1 - rate
+        self.oii = True
+
+
+    def forward(self, inputs):
+        self.inputs = inputs
+        self.r = np.random.binomial(1, self.rate, size=inputs.shape)
+        self.output = self.r * self.inputs
+
+
+    def backward(self, dx):
+        self.dinputs = dx * self.r

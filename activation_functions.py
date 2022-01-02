@@ -64,8 +64,16 @@ class softmax:
     
     def forward(self, x):
         exp_values = np.exp(x - np.max(x, keepdims=True, axis=1))
-        output = exp_values/np.sum(exp_values, keepdims=True, axis=1)
-        return output.astype(np.float32)
+        self.output = exp_values/np.sum(exp_values, keepdims=True, axis=1)
+
+
+    def backward(self, dx):
+        self.dinputs = np.empty_like(dx)
+
+        for i, (output_i, dx_i) in enumerate(zip(self.output, dx)):
+            output_i = output_i.reshape(-1, 1)
+            jacobian_matrix = np.diagflat(output_i) - np.dot(output_i, output_i.T)
+            self.dinputs[i] = np.dot(jacobian_matrix, dx_i)
 
 
 class softplus:
@@ -96,10 +104,10 @@ class leaky_relu:
 class linear:
 
     def forward(self, x):
-        return x
+        self.output = x
 
-    def backward(self, dx, *args):
-        return dx
+    def backward(self, dx):
+        self.dinputs = dx.copy()
 
 
 def deserialize(name, **kwargs):
